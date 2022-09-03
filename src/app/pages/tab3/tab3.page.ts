@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/member-ordering */
+import { Article } from './../../interfaces/index';
+import { StorageService } from './../../services/storage.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -7,6 +10,10 @@ import { Component } from '@angular/core';
 })
 export class Tab3Page {
 
-  constructor() {}
+  get articles(): Article[]{
+    return this.storageService.getLocalArticles;
+  }
+
+  constructor(private storageService: StorageService) {}
 
 }
