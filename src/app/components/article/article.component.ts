@@ -1,3 +1,4 @@
+import { StorageService } from './../../services/storage.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { Article } from 'src/app/interfaces';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
@@ -14,7 +15,11 @@ export class ArticleComponent implements OnInit {
   @Input() article: Article;
   @Input() index: number;
 
-  constructor(private iab: InAppBrowser, private actionSheetCtrl: ActionSheetController) { }
+  constructor(
+    private iab: InAppBrowser,
+    private actionSheetCtrl: ActionSheetController,
+    private storageService: StorageService
+    ) { }
 
   ngOnInit() {}
 
@@ -25,6 +30,9 @@ export class ArticleComponent implements OnInit {
   }
 
   async openMenu(){
+
+    const articleInFavorites = this.storageService.articleInFavorites(this.article);
+
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Options',
       buttons: [
@@ -34,8 +42,8 @@ export class ArticleComponent implements OnInit {
           handler: ()=>this.shareArticle()
         },
         {
-          text:'Favorites',
-          icon:'heart-outline',
+          text: articleInFavorites ? 'Remove' : 'Favorites',
+          icon: articleInFavorites ? 'heart' : 'heart-outline',
           handler: ()=>this.onToggleFavorite()
         },
         {
@@ -60,6 +68,7 @@ export class ArticleComponent implements OnInit {
 
   onToggleFavorite(){
     console.log('toggle article');
+    this.storageService.saveOrRemoveArticle(this.article);
   }
 
 }
